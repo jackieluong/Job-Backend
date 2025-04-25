@@ -4,16 +4,33 @@ import com.example.Job.constant.IndustryEnum;
 import com.example.Job.constant.JobTypeEnum;
 import com.example.Job.constant.LevelEnum;
 import com.example.Job.entity.Job;
+import jakarta.annotation.PostConstruct;
 import jakarta.persistence.criteria.*;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
-
+@Component
 public class JobSpecifications {
 
+    public static final double defaultSimilarityThreshold = 0.3;
+    private final JdbcTemplate jdbcTemplate;
+
+    public JobSpecifications(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
+
+    @PostConstruct
+    public void init() {
+        // Set the threshold on application startup
+        System.out.println("Set the threshold on application startup");
+        String sql = String.format("SET pg_trgm.word_similarity_threshold = %f", defaultSimilarityThreshold);
+        jdbcTemplate.execute(sql);
+    }
 
     public static Specification<Job> hasSimilarKeywordWithTitle(String title){
         return (root, query, cb) -> {
@@ -29,6 +46,8 @@ public class JobSpecifications {
             );
         };
     }
+
+    // Perform full text search
     public static Specification<Job> hasKeyword(String keyword){
         return (root, query, cb) -> {
             if(keyword == null || keyword.isEmpty()) return null;
@@ -51,6 +70,57 @@ public class JobSpecifications {
             );
         };
     }
+
+    // Perform fuzzy search that is similar partially to job title
+    public static Specification<Job> hasTitleMatchPartialWithSimilarity(String keyword){
+        return (root, query, cb) -> {
+            if(keyword == null || keyword.isEmpty()) return null;
+
+            String formatKeyword = keyword.trim().toLowerCase();
+
+
+            // Using postgres word_similarity function with a threshold
+            Expression<Boolean> similarity = cb.function(
+                    "fuzzy_match_partial",
+                    Boolean.class,
+                    cb.literal(formatKeyword),
+                    root.get("name")
+            );
+
+            // Only return result whose similarity is greater than our defined threshold
+            return cb.isTrue(
+                    similarity
+            );
+        };
+    }
+
+    // Perform fuzzy search that is similar to job title above a defined threshold
+    public static Specification<Job> hasTitleWithSimilarityAboveThreshold(String keyword, Double threshold){
+        return (root, query, cb) -> {
+            if(keyword == null || keyword.isEmpty()) return null;
+
+            String formatKeyword = keyword.trim().toLowerCase();
+
+
+            // Using postgres word_similarity function with a threshold
+            Expression<Double> similarity = cb.function(
+                    "word_similarity",
+                    Double.class,
+                    root.get("name"),
+                    cb.literal(formatKeyword)
+            );
+
+            // Only return result whose similarity is greater than our defined threshold
+            return cb.greaterThanOrEqualTo(
+                similarity,
+                    threshold != null ? threshold : defaultSimilarityThreshold
+            );
+        };
+    }
+
+
+
+
 
 //    public static Specification<Job> orderByRank(String keyword){
 //        return (root, query, cb) -> {

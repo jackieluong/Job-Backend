@@ -259,9 +259,10 @@ public class JobServiceImpl implements IJobService {
         PageRequest pageRequest = PageRequest.of(currentPage, pageSize);
 
         Specification<Job> spec = (root, query, cb) -> {
-            // Add filtering logic
+            // Add fuzzy search, full-text search and filtering logic
             Predicate predicate = Specification
                     .where(JobSpecifications.hasKeyword(jobFilter.getKeyword())
+                            .or(JobSpecifications.hasTitleMatchPartialWithSimilarity(jobFilter.getKeyword()))
                             .and(JobSpecifications.hasJobType(jobFilter.getJobType()))
                             .and(JobSpecifications.hasIndustry(jobFilter.getIndustry()))
                             .and(JobSpecifications.hasLevel(jobFilter.getLevel()))
@@ -299,8 +300,11 @@ public class JobServiceImpl implements IJobService {
 
         return jobPage.map(job -> {
                 GetJobResponse response = modelMapper.map(job, GetJobResponse.class);
-                boolean isSaved = jobSaveService.isJobSaved(job.getId());
-                response.setSaved(isSaved);
+
+                if(JwtUtil.isAuthenticated()){
+                    boolean isSaved = jobSaveService.isJobSaved(job.getId());
+                    response.setSaved(isSaved);
+                }
                 return response;
             }
         );

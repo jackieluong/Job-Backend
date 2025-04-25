@@ -2,6 +2,7 @@ package com.example.Job.security;
 
 import com.example.Job.entity.Account;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -46,6 +47,14 @@ public class JwtUtil {
 //        return new SecretKeySpec(keyBytes, 0, keyBytes.length , JwtTokenProvider.JWT_ALGORITHM.getName());
 //    }
 
+    public static boolean isAuthenticated() {
+        SecurityContext context = SecurityContextHolder.getContext();
+        Authentication authentication = context.getAuthentication();
+        return authentication != null
+                && authentication.isAuthenticated()
+                && !(authentication instanceof AnonymousAuthenticationToken)
+                && !authentication.getPrincipal().equals("anonymousUser");
+    }
 
     public Jwt verifyToken(String token){
 //        NimbusJwtDecoder jwtDecoder = NimbusJwtDecoder.withSecretKey(
