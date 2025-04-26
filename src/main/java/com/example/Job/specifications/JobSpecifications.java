@@ -1,10 +1,12 @@
 package com.example.Job.specifications;
 
 import com.example.Job.constant.IndustryEnum;
+import com.example.Job.constant.JobStatusEnum;
 import com.example.Job.constant.JobTypeEnum;
 import com.example.Job.constant.LevelEnum;
 import com.example.Job.entity.Job;
 import jakarta.annotation.PostConstruct;
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -19,6 +21,7 @@ public class JobSpecifications {
 
     public static final double defaultSimilarityThreshold = 0.3;
     private final JdbcTemplate jdbcTemplate;
+
 
     public JobSpecifications(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -79,7 +82,6 @@ public class JobSpecifications {
             String formatKeyword = keyword.trim().toLowerCase();
 
 
-            // Using postgres word_similarity function with a threshold
             Expression<Boolean> similarity = cb.function(
                     "fuzzy_match_partial",
                     Boolean.class,
@@ -164,6 +166,14 @@ public class JobSpecifications {
         };
     }
 
+    public static Specification<Job> hasStatus(JobStatusEnum jobStatus){
+        return (root, query, cb) -> {
+            if(jobStatus == null) return null;
+            return cb.equal(root.get("jobStatus"), jobStatus);
+
+        };
+    }
+
     public static Specification<Job> hasLevel(LevelEnum level){
         return (root, query, cb) -> {
             if(level == null) return null;
@@ -196,8 +206,16 @@ public class JobSpecifications {
         return (root, query, cb) -> {
             if(cities == null || cities.isEmpty()) return null;
 
-            return cb.in(root.get("city")).value(cities);
+            return cb.isTrue(
+                    cb.function(
+                            "array_overlap",
+                            Boolean.class,
+                            root.get("city"),
+                            cb.literal(cities.toArray(new String[0]))
+                    )
+            );
         };
+
     }
 
 }

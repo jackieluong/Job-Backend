@@ -14,7 +14,7 @@ import io.jsonwebtoken.Jwts;
 
 public class WebSocketAuthInterceptor implements HandshakeInterceptor {
 
-    @Value("${app.jwt-secret}") // Lấy secret từ application.properties
+    @Value("${app.jwt-secret}") // Lấy secret từ application.yaml
     private String secretKey;
 
     @Override

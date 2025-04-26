@@ -1,0 +1,118 @@
+server:
+  port: ${SERVER_PORT}
+
+
+app:
+  jwt-secret: ${JWT_SECRET}
+  oauth2:
+    authorizedRedirectUris: ${FRONTEND_URL}/auth/callback
+  jwt:
+    access-token-expiration-seconds: '604800'
+    refresh-token-expiration-seconds: '2592000'
+  decrypt-key: ${DECRYPT_KEY}
+
+hibernate:
+  metamodel:
+    model_contributor: com.example.Job.functions.PostgreSQLFunctionContributor
+
+spring:
+  mail:
+    username: ${SMTP_USER}
+    host: smtp.gmail.com
+    password: ${SMTP_PASSWORD}
+    port: '587'
+    properties:
+      mail:
+        smtp:
+          starttls:
+            enable: 'true'
+          auth: 'true'
+
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: 'true'
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  datasource:
+    hikari:
+      idle-timeout: '60000'
+      maximum-pool-size: '20'
+      connection-timeout: '30000'
+      max-lifetime: '1800000'
+      minimum-idle: '5'
+    password: ${DB_PASSWORD}
+    url: ${DB_URL}
+    username: ${DB_USER}
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            redirect-uri: ${BASE_URL}/login/oauth2/code/google
+
+  application:
+    name: Job
+
+  data:
+    redis:
+      port: ${REDIS_PORT}
+      username: ${REDIS_USERNAME}
+      password: ${REDIS_PASSWORD}
+      ssl:
+        enabled: ${REDIS_SSL_ENABLED}
+      host: ${REDIS_HOST}
+    mongodb:
+      uri: mongodb+srv://topcv:Topcv123456@clustertopcv.nhxhu.mongodb.net/topcv?appName=ClusterTopcv
+
+  servlet:
+    multipart:
+      max-request-size: 10MB
+      max-file-size: 5MB
+
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+springdoc:
+  swagger-ui:
+    enabled: 'true'
+    url: /v3/api-docs
+    path: /swagger-ui.html
+  api-docs:
+    enabled: 'true'
+  override-with-generic-response: 'false'
+
+resilience4j:
+  ratelimiter:
+    instances:
+      perUserRateLimiter:
+        limit-refresh-period: 10s
+        timeout-duration: 2s
+        limit-for-period: '5'
+      globalRateLimiter:
+        limit-for-period: '500'
+        limit-refresh-period: 10s
+        timeout-duration: 3s
+
+
+logging:
+  level:
+    org.springframework.web: DEBUG
+    org.springframework.security: DEBUG
+    org.hibernate.SQL: debug
+    org.hibernate.orm.jdbc.bind: trace
+    org.springframework.messaging: trace
+    org.springframework.data.redis: DEBUG
+
+cloudinary:
+  cloud-name: ${CLOUDINARY_CLOUD_NAME}
+  api-secret: ${CLOUDINARY_API_SECRET}
+  api-key: ${CLOUDINARY_API_KEY}
+

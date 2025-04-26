@@ -8,7 +8,6 @@ import org.springframework.data.repository.query.Param;
 
 public interface CompanyRepository extends JpaRepository<Company, Long> {
 
-    @Modifying
-    @Query("UPDATE Company c SET c.numOfFollowers =  c.numOfFollowers + 1 WHERE c.id = :id")
-    void increaseFollowers(@Param("id") Long id);
+
+
 }

@@ -11,4 +11,5 @@ public interface ICompanyService {
 
     Company getCompanyById(Long id);
 
+
 }

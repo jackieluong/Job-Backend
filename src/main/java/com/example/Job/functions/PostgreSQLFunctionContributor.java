@@ -19,6 +19,13 @@ public class PostgreSQLFunctionContributor implements FunctionContributor {
         TypeConfiguration typeConfiguration = functionContributions.getTypeConfiguration();
 
 
+        // Register overlap operator
+        functionRegistry.registerPattern(
+                "array_overlap",
+                "?1 && ?2",
+                typeConfiguration.getBasicTypeRegistry().resolve(StandardBasicTypes.BOOLEAN)
+        );
+
         functionRegistry.registerPattern(
                 "fts_match",
                 "(?1 @@ plainto_tsquery('pg_catalog.simple', unaccent(?2)))",

@@ -269,6 +269,7 @@ public class JobServiceImpl implements IJobService {
                             .and(JobSpecifications.hasExperienceBetween(jobFilter.getMinExperience(), jobFilter.getMaxExperience()))
                             .and(JobSpecifications.hasSalaryBetween(jobFilter.getMinSalary(), jobFilter.getMaxSalary()))
                             .and(JobSpecifications.hasCityIn(jobFilter.getCities())))
+                            .and(JobSpecifications.hasStatus(JobStatusEnum.ACTIVE))
                     .toPredicate(root, query, cb);
 
             // Add ordering logic

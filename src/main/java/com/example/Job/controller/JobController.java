@@ -190,15 +190,15 @@ public class JobController {
                                                           @RequestParam(value = "jobType", required = false) JobTypeEnum jobType,
                                                           @RequestParam(value = "industry", required = false) IndustryEnum industry,
                                                           @RequestParam(value = "level", required = false) LevelEnum level,
-                                                          @RequestParam(value = "minExperience", defaultValue = "0") Integer minExperience,
-                                                          @RequestParam(value = "maxExperience", defaultValue = "100") Integer maxExperience,
+                                                          @RequestParam(value = "minExperience", required = false) Integer minExperience,
+                                                          @RequestParam(value = "maxExperience", required = false) Integer maxExperience,
                                                           @RequestParam(value = "minSalary", required = false) Double minSalary,
                                                           @RequestParam(value = "maxSalary", required = false) Double maxSalary,
                                                           @RequestParam(value = "cities", required = false) List<String> cities
                                                           ) {
 
-        double minSal = minSalary == null ? 0 : minSalary;
-        double maxSal = maxSalary == null ? Double.MAX_VALUE : maxSalary;
+//        double minSal = minSalary == null ? 0 : minSalary;
+//        double maxSal = maxSalary == null ? Double.MAX_VALUE : maxSalary;
 
         JobFilter jobFilter = JobFilter.builder()
                 .keyword(keyword)
@@ -207,8 +207,8 @@ public class JobController {
                 .level(level)
                 .minExperience(minExperience)
                 .maxExperience(maxExperience)
-                .minSalary(minSal)
-                .maxSalary(maxSal)
+                .minSalary(minSalary)
+                .maxSalary(maxSalary)
                 .cities(cities)
                 .build();
         Page<GetJobResponse> jobResPage = jobService.searchForJobs(current - 1, pageSize, sortBy, Boolean.valueOf(isAscending),
