@@ -48,6 +48,7 @@ public class EmailServiceImpl implements IEmailService {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         try {
             MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, isMultipart, StandardCharsets.UTF_8.name());
+
             messageHelper.setTo(to);
             messageHelper.setSubject(subject);
             messageHelper.setText(content, isHtml);

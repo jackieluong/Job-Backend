@@ -255,7 +255,8 @@ public class JobServiceImpl implements IJobService {
     public Page<GetJobResponse> searchForJobs(int currentPage, int pageSize, String sortBy, boolean isAscending, JobFilter jobFilter) {
 //        Sort sort = isAscending ? Sort.by(sortBy) : Sort.by(sortBy).descending();
 
-
+        StringBuilder stringBuilder = new StringBuilder();
+        
         PageRequest pageRequest = PageRequest.of(currentPage, pageSize);
 
         Specification<Job> spec = (root, query, cb) -> {

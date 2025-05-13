@@ -62,12 +62,20 @@ spring:
 
   data:
     redis:
-      port: ${REDIS_PORT}
+      host: localhost
+      port: 6379
       username: ${REDIS_USERNAME}
       password: ${REDIS_PASSWORD}
-      ssl:
-        enabled: ${REDIS_SSL_ENABLED}
-      host: ${REDIS_HOST}
+#      ssl:
+#        enabled: true
+#      lettuce:
+#        pool:
+#          max-active: 10    # Maximum number of connections (equivalent to maxTotal)
+#          max-idle: 8       # Maximum number of idle connections
+#          min-idle: 4       # Minimum number of idle connections
+#          max-wait: 3000    # Maximum wait time for a connection (ms)
+#        command-timeout: 3000  # Command timeout (ms)
+
     mongodb:
       uri: mongodb+srv://topcv:Topcv123456@clustertopcv.nhxhu.mongodb.net/topcv?appName=ClusterTopcv
 
@@ -109,7 +117,8 @@ logging:
     org.hibernate.SQL: debug
     org.hibernate.orm.jdbc.bind: trace
     org.springframework.messaging: trace
-    org.springframework.data.redis: DEBUG
+    org.springframework.data.redis: trace
+#    io.lettuce.core: DEBUG
 
 cloudinary:
   cloud-name: ${CLOUDINARY_CLOUD_NAME}

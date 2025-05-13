@@ -30,6 +30,12 @@
 		<java.version>17</java.version>
 	</properties>
 	<dependencies>
+
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-pool2</artifactId>
+		</dependency>
+
 		<!-- Spring Security with OAuth2 -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -207,7 +213,7 @@
 						<path>
 							<groupId>org.projectlombok</groupId>
 							<artifactId>lombok</artifactId>
-<!--							 <version>1.18.36</version>-->
+							 <version>1.18.36</version>
 						</path>
 					</annotationProcessorPaths>
 				</configuration>
@@ -220,7 +226,7 @@
 						<exclude>
 							<groupId>org.projectlombok</groupId>
 							<artifactId>lombok</artifactId>
-<!--							 <version>1.18.36</version>-->
+							 <version>1.18.36</version>
 						</exclude>
 					</excludes>
 				</configuration>
