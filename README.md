@@ -24,8 +24,8 @@ docker-compose --version
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/manhttienn/job-app.git
-cd job-app
+git clone https://github.com/jackieluong/Job-Backend.git
+cd Job-Backend
 ```
 
 ### 2. Verify Required Files
@@ -63,7 +63,7 @@ Cloudinary → CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET
 Google OAuth → GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET  
 ```
 
-> ⚠️ Make sure your PostgreSQL are accessible if hosted externally.
+> ⚠️ Make sure your PostgreSQL are accessible if hosted externally (cloud,..).
 
 ---
 
@@ -143,7 +143,7 @@ docker-compose ps
 docker-compose logs redis
 ```
 
-* Ensure `REDIS_PASSWORD` in `.env` is correct.
+* Ensure `REDIS_HOST` in `.env` is correct.
 
 ---
 
@@ -159,20 +159,6 @@ SQLException: Connection refused
 
 * Check your `.env` for valid `DB_URL`, `DB_USER`, and `DB_PASSWORD`.
 * Make sure PostgreSQL is running and accessible.
-
----
-
-### ❌ Placeholder Errors
-
-**Error**:
-
-```
-Could not resolve placeholder 'REDIS_PASSWORD'
-```
-
-**Fix**:
-
-* Ensure all required keys are defined in your `.env` file.
 
 ---
 
