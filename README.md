@@ -1,37 +1,191 @@
-# Cần cài đặt dưới local:
+# Running the Application with Docker Compose
 
-1. PostgreSQL (Xem hướng dẫn trong file application.properties)
+This guide explains how to run the **job-app** (a Spring Boot application) using **Docker Compose**.
+The app requires **Redis** (included), and connects to **PostgreSQL**, **SMTP**, **Cloudinary**, and **Google OAuth**.
 
-- Cài Postgres: http://postgresql.org/download/windows/
-  - Trong quá trình cài, thấy nó cho phép cài luôn PgAdmin4 thì tích vào, không thì phải tự cài tay
-  - Không bắt buộc dùng PgAdmin4, dùng tool khác mở lên cũng được
-- Tạo database "topcv"
-- Trong Login/Group Roles, tạo user + password & cấu hình quyền
+---
 
-  - (Xem hướng dẫn trong file application.properties)
+## Prerequisites
 
-- Redis
+### ✅ Install Docker
 
-  - Tải redis-server cho windows về, chạy nó lên (sau đó nó sẽ chạy dưới background nền)
-  - Tải Redis Desktop về để xem, kết nối thử đến redis-server
-    --> Nhấn nút Connect to Redis Server
-    --> Nhấn Test Connection
-  - Thường redis sẽ chạy ở port 6379
+* **[Download Docker Desktop](https://www.docker.com/products/docker-desktop)**
+* Verify installation:
 
-- Java 21 (nhớ thêm biến môi trường cho máy tính nhé)
-- Maven
-  - Note thêm: dưới máy local, maven hoạt động rất ngon lành
-    nhưng trong công ty có proxy chặn lại, maven có thể gây ra lỗi, phải tự set up proxy cho maven
-- Nếu dùng IDE khác thì không rõ, nhưng nếu dùn Visual Studio Code, có thể add thêm các extension sau:
-  - Language Support for Java(TM) by Red Hat
-  - Debugger for Java
-  - Gradle for Java
-  - Extension Pack for Java
-  - Project Manager for Java
-  - Maven for Java
-  - Spring Initializr Java Support
+```bash
+docker --version
+docker-compose --version
+```
 
-# Chạy project:
+---
 
-- mvn clean
-- mvn spring-boot:run
+## 📦 Project Setup
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/manhttienn/job-app.git
+cd job-app
+```
+
+### 2. Verify Required Files
+
+Make sure these files exist in the root of the repository:
+
+```
+.
+├── docker-compose.yml
+├── Dockerfile
+├── .env              ← (You will create this)
+└── src/main/resources/application.yml
+```
+
+---
+
+## 🔐 Configure Environment
+
+### 3. Create and Configure `.env`
+
+* Copy the template:
+
+```bash
+cp .env.example .env
+```
+
+* Fill in your own values:
+
+```
+POSTGRESQL → DB_URL, DB_USER, DB_PASSWORD  
+MONGODB → MONGO_URI  
+REDIS → REDIS_HOST, REDIS_PORT, REDIS_PASSWORD  
+SMTP (Gmail) → SMTP_USER, SMTP_PASSWORD  
+Cloudinary → CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET  
+Google OAuth → GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET  
+```
+
+> ⚠️ Make sure your PostgreSQL are accessible if hosted externally.
+
+---
+
+##  Running the App with Docker Compose
+
+### 4. Build and Start Containers
+
+```bash
+docker-compose up -d --build
+```
+
+This will:
+
+* Build the Docker image
+* Start:
+
+  * Backend Spring Boot app
+  * Redis container using `redis:7.0-alpine` 
+
+---
+
+## ✅ Testing the App
+
+### 🔍 Swagger UI:
+
+* [http://localhost:8081/swagger-ui.html](http://localhost:8081/swagger-ui.html)
+
+### 🩵 View Logs:
+
+```bash
+docker-compose logs app
+```
+
+---
+
+## 🚩 Stopping the App
+
+```bash
+docker-compose down
+```
+
+---
+
+## 🚯 Troubleshooting
+
+### ❌ Build Errors
+
+**Error**:
+
+```
+ERROR: failed to solve: ...
+```
+
+**Fix**:
+Check Dockerfile and project files. Rebuild manually:
+
+```bash
+docker-compose build
+```
+
+---
+
+### ❌ Redis Connection Errors
+
+**Error**:
+
+```
+RedisConnectionException: Unable to connect to redis:6379
+```
+
+**Fix**:
+
+* Check if Redis is running:
+
+```bash
+docker-compose ps
+docker-compose logs redis
+```
+
+* Ensure `REDIS_PASSWORD` in `.env` is correct.
+
+---
+
+### ❌ PostgreSQL Connection Errors
+
+**Error**:
+
+```
+SQLException: Connection refused
+```
+
+**Fix**:
+
+* Check your `.env` for valid `DB_URL`, `DB_USER`, and `DB_PASSWORD`.
+* Make sure PostgreSQL is running and accessible.
+
+---
+
+### ❌ Placeholder Errors
+
+**Error**:
+
+```
+Could not resolve placeholder 'REDIS_PASSWORD'
+```
+
+**Fix**:
+
+* Ensure all required keys are defined in your `.env` file.
+
+---
+
+## 📌 Notes
+
+* The `Dockerfile` builds the app from source. If you change code, rebuild:
+
+```bash
+docker-compose up -d --build
+```
+
+* Make sure your external services are online and credentials in `.env` are correct.
+
+---
+
+
