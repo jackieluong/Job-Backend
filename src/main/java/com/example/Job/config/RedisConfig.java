@@ -38,8 +38,8 @@ public class RedisConfig {
     @Value("${spring.data.redis.password}")
     private String redisPassword;
 
-    // default cache time to live will be 7 days, if no time to live is specified
-    public static final Duration defaultTTL = Duration.ofDays(7);
+    // default cache time to live will be 2 days, if no time to live is specified
+    public static final Duration defaultTTL = Duration.ofDays(2);
 
 //    @Bean(destroyMethod = "shutdown")
 //    public ClientResources clientResources() {
